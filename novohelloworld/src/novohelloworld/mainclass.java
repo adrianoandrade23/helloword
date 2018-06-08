@@ -1,5 +1,5 @@
 package novohelloworld;
 
 public class mainclass {
-//test
+//test made directly by github
 }
