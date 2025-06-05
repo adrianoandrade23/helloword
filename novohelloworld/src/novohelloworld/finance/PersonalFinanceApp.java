@@ -10,10 +10,14 @@ import java.util.Scanner;
  */
 public class PersonalFinanceApp {
     private final Map<String, Account> accounts = new HashMap<>();
+    private final Map<String, CreditCardAccount> creditCards = new HashMap<>();
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
+                for (CreditCardAccount cc : creditCards.values()) {
+                    cc.checkNotifications();
+                }
                 printMenu();
                 String choice = scanner.nextLine();
                 switch (choice) {
@@ -32,6 +36,15 @@ public class PersonalFinanceApp {
                     case "5":
                         listTransactions(scanner);
                         break;
+                    case "6":
+                        createCreditCard(scanner);
+                        break;
+                    case "7":
+                        addCreditCardExpense(scanner);
+                        break;
+                    case "8":
+                        viewCreditCardSummary(scanner);
+                        break;
                     case "0":
                         System.out.println("Goodbye!");
                         return;
@@ -49,6 +62,9 @@ public class PersonalFinanceApp {
         System.out.println("3) Add expense");
         System.out.println("4) List accounts");
         System.out.println("5) List transactions for account");
+        System.out.println("6) Create credit card");
+        System.out.println("7) Add credit card expense");
+        System.out.println("8) View credit card summary");
         System.out.println("0) Exit");
         System.out.print("Choose: ");
     }
@@ -105,5 +121,53 @@ public class PersonalFinanceApp {
         for (Transaction t : account.getTransactions()) {
             System.out.printf("%s %s %.2f - %s%n", t.getDate(), t.getType(), t.getAmount(), t.getDescription());
         }
+    }
+
+    private void createCreditCard(Scanner scanner) {
+        System.out.print("Card name: ");
+        String name = scanner.nextLine();
+        if (creditCards.containsKey(name)) {
+            System.out.println("Card already exists");
+            return;
+        }
+        System.out.print("Statement cycle day (1-28): ");
+        int cycleDay = Integer.parseInt(scanner.nextLine());
+        System.out.print("Payment due day (1-28): ");
+        int dueDay = Integer.parseInt(scanner.nextLine());
+        System.out.print("Credit limit: ");
+        double limit = Double.parseDouble(scanner.nextLine());
+        System.out.print("Interest rate APR (%): ");
+        double apr = Double.parseDouble(scanner.nextLine());
+        creditCards.put(name, new CreditCardAccount(name, cycleDay, limit, dueDay, apr));
+        System.out.println("Credit card created");
+    }
+
+    private void addCreditCardExpense(Scanner scanner) {
+        System.out.print("Card name: ");
+        String name = scanner.nextLine();
+        CreditCardAccount card = creditCards.get(name);
+        if (card == null) {
+            System.out.println("Card not found");
+            return;
+        }
+        System.out.print("Amount: ");
+        double amount = Double.parseDouble(scanner.nextLine());
+        System.out.print("Description: ");
+        String desc = scanner.nextLine();
+        System.out.print("Installments (1 for none): ");
+        int inst = Integer.parseInt(scanner.nextLine());
+        card.addTransaction(amount, desc, inst);
+        System.out.println("Transaction added");
+    }
+
+    private void viewCreditCardSummary(Scanner scanner) {
+        System.out.print("Card name: ");
+        String name = scanner.nextLine();
+        CreditCardAccount card = creditCards.get(name);
+        if (card == null) {
+            System.out.println("Card not found");
+            return;
+        }
+        card.printSummary();
     }
 }
