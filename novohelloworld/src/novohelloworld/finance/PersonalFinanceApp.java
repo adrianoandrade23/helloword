@@ -1,15 +1,15 @@
 package novohelloworld.finance;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Very small console-based personal finance application.
  */
 public class PersonalFinanceApp {
-    private final Map<String, Account> accounts = new HashMap<>();
+    private final List<Account> accounts = new ArrayList<>();
 
     public void start() {
         try (Scanner scanner = new Scanner(System.in)) {
@@ -32,6 +32,15 @@ public class PersonalFinanceApp {
                     case "5":
                         listTransactions(scanner);
                         break;
+                    case "6":
+                        editAccount(scanner);
+                        break;
+                    case "7":
+                        archiveAccount(scanner);
+                        break;
+                    case "8":
+                        reorderAccounts(scanner);
+                        break;
                     case "0":
                         System.out.println("Goodbye!");
                         return;
@@ -49,6 +58,9 @@ public class PersonalFinanceApp {
         System.out.println("3) Add expense");
         System.out.println("4) List accounts");
         System.out.println("5) List transactions for account");
+        System.out.println("6) Edit account");
+        System.out.println("7) Archive account");
+        System.out.println("8) Reorder accounts");
         System.out.println("0) Exit");
         System.out.print("Choose: ");
     }
@@ -56,20 +68,44 @@ public class PersonalFinanceApp {
     private void createAccount(Scanner scanner) {
         System.out.print("Account name: ");
         String name = scanner.nextLine();
-        if (accounts.containsKey(name)) {
+        if (findAccountByName(name) != null) {
             System.out.println("Account already exists");
             return;
         }
-        accounts.put(name, new Account(name));
+
+        System.out.print("Account type (BANK, CREDIT_CARD, CASH, INVESTMENT): ");
+        String typeStr = scanner.nextLine().toUpperCase();
+        Account.AccountType type;
+        try {
+            type = Account.AccountType.valueOf(typeStr);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid type");
+            return;
+        }
+
+        System.out.print("Currency (e.g. USD): ");
+        String currency = scanner.nextLine();
+
+        System.out.print("Opening balance: ");
+        double opening = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Color: ");
+        String color = scanner.nextLine();
+
+        accounts.add(new Account(name, type, currency, color, opening));
         System.out.println("Account created");
     }
 
     private void addTransaction(Scanner scanner, Transaction.Type type) {
         System.out.print("Account name: ");
         String accountName = scanner.nextLine();
-        Account account = accounts.get(accountName);
+        Account account = findAccountByName(accountName);
         if (account == null) {
             System.out.println("Account not found");
+            return;
+        }
+        if (account.isArchived()) {
+            System.out.println("Account is archived");
             return;
         }
         System.out.print("Amount: ");
@@ -85,15 +121,17 @@ public class PersonalFinanceApp {
             System.out.println("No accounts");
             return;
         }
-        for (Account acc : accounts.values()) {
-            System.out.printf("%s - Balance: %.2f%n", acc.getName(), acc.getBalance());
+        int index = 1;
+        for (Account acc : accounts) {
+            String archivedFlag = acc.isArchived() ? "(archived)" : "";
+            System.out.printf("%d) %s %s - Balance: %.2f %s%n", index++, acc.getName(), archivedFlag, acc.getBalance(), acc.getCurrency());
         }
     }
 
     private void listTransactions(Scanner scanner) {
         System.out.print("Account name: ");
         String accountName = scanner.nextLine();
-        Account account = accounts.get(accountName);
+        Account account = findAccountByName(accountName);
         if (account == null) {
             System.out.println("Account not found");
             return;
@@ -105,5 +143,79 @@ public class PersonalFinanceApp {
         for (Transaction t : account.getTransactions()) {
             System.out.printf("%s %s %.2f - %s%n", t.getDate(), t.getType(), t.getAmount(), t.getDescription());
         }
+    }
+
+    private void editAccount(Scanner scanner) {
+        System.out.print("Account name to edit: ");
+        String name = scanner.nextLine();
+        Account account = findAccountByName(name);
+        if (account == null) {
+            System.out.println("Account not found");
+            return;
+        }
+        System.out.print("New name (leave blank to keep): ");
+        String newName = scanner.nextLine();
+        if (!newName.isBlank() && findAccountByName(newName) == null) {
+            account.setName(newName);
+        }
+        System.out.print("New color (leave blank to keep): ");
+        String color = scanner.nextLine();
+        if (!color.isBlank()) {
+            account.setColor(color);
+        }
+        System.out.println("Account updated");
+    }
+
+    private void archiveAccount(Scanner scanner) {
+        System.out.print("Account name to archive: ");
+        String name = scanner.nextLine();
+        Account account = findAccountByName(name);
+        if (account == null) {
+            System.out.println("Account not found");
+            return;
+        }
+        System.out.print("Are you sure? (y/n): ");
+        if (!scanner.nextLine().equalsIgnoreCase("y")) {
+            return;
+        }
+        System.out.print("Type ARCHIVE to confirm: ");
+        if (scanner.nextLine().equals("ARCHIVE")) {
+            account.archive();
+            System.out.println("Account archived");
+        } else {
+            System.out.println("Archive cancelled");
+        }
+    }
+
+    private void reorderAccounts(Scanner scanner) {
+        if (accounts.size() < 2) {
+            System.out.println("Not enough accounts to reorder");
+            return;
+        }
+        listAccounts();
+        System.out.print("Move which index? ");
+        int from = Integer.parseInt(scanner.nextLine()) - 1;
+        if (from < 0 || from >= accounts.size()) {
+            System.out.println("Invalid index");
+            return;
+        }
+        System.out.print("Move to position: ");
+        int to = Integer.parseInt(scanner.nextLine()) - 1;
+        if (to < 0 || to >= accounts.size()) {
+            System.out.println("Invalid position");
+            return;
+        }
+        Account acc = accounts.remove(from);
+        accounts.add(to, acc);
+        System.out.println("Accounts reordered");
+    }
+
+    private Account findAccountByName(String name) {
+        for (Account acc : accounts) {
+            if (acc.getName().equalsIgnoreCase(name)) {
+                return acc;
+            }
+        }
+        return null;
     }
 }
