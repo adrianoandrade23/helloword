@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backyard Pokédex | Family Nature Explorer</title>
+    <meta
+      name="description"
+      content="Backyard Pokédex is a family-friendly app concept to discover, identify, and track backyard wildlife together."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="top-nav">
+        <span class="brand">🌿 Backyard Pokédex</span>
+        <a class="button ghost" href="#waitlist">Join waitlist</a>
+      </nav>
+
+      <div class="hero-content">
+        <p class="eyebrow">POC · Front page</p>
+        <h1>Turn backyard moments into family discoveries.</h1>
+        <p class="subtitle">
+          A playful, kid-friendly way to capture bugs, birds, and tiny backyard adventures while parents stay in control.
+        </p>
+        <div class="cta-row">
+          <a class="button primary" href="#features">Explore features</a>
+          <a class="button secondary" href="#vision">See app vision</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="features" class="section">
+        <h2>What families can do</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>📸 Quick capture</h3>
+            <p>Snap a photo in seconds and save observations with notes, behavior tags, and optional location.</p>
+          </article>
+          <article class="card">
+            <h3>🧠 Smart species hints</h3>
+            <p>Get top candidate matches for each sighting, then let a parent confirm the final species.</p>
+          </article>
+          <article class="card">
+            <h3>🏅 Progress and badges</h3>
+            <p>Unlock species cards, earn fun badges, and keep kids motivated with seasonal discovery goals.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="vision" class="section alt">
+        <h2>Built for learning and safety</h2>
+        <ul>
+          <li>Private-by-default family profiles.</li>
+          <li>Parent controls for sharing and privacy settings.</li>
+          <li>Real-world nature learning with age-appropriate design.</li>
+        </ul>
+      </section>
+
+      <section id="waitlist" class="section">
+        <h2>Stay updated</h2>
+        <p>This is an initial proof-of-concept landing page. Full product flows are coming next.</p>
+        <form class="waitlist-form" onsubmit="event.preventDefault(); alert('Thanks! We\'ll keep you posted.');">
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" type="email" placeholder="Parent email" required />
+          <button type="submit" class="button primary">Notify me</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <small>© 2026 Backyard Pokédex POC</small>
+    </footer>
+  </body>
+</html>
