@@ -157,6 +157,75 @@ A family-friendly "home Pokédex" app where kids and parents can discover, ident
 - CDN for media delivery.
 - Background jobs for notifications, exports, and reprocessing.
 
+
+## 8.1) Mobile Runtime Plan (How It Runs on Phones)
+
+### Development Setup (Free)
+- Use **React Native + Expo** so one codebase runs on Android and iOS.
+- Install tools: Node.js LTS, Expo CLI, Android Studio emulator (free), Xcode simulator on macOS (free).
+- Use `expo start` for local development and instant preview.
+- For real devices during development, use **Expo Go** (no paid account required).
+
+### Mobile App Architecture
+- **State:** local cache-first approach (SQLite/AsyncStorage) + server sync.
+- **Offline mode:** observations save locally first, then sync when internet returns.
+- **Media handling:** compress photos on device before upload to reduce bandwidth.
+- **Background sync:** queue unsent items with retry policy.
+
+### Build and Release Strategy
+- **Alpha testing:** share Expo development builds with family testers.
+- **Android production:** generate Android App Bundle and publish to Play Store.
+- **iOS production:** generate iOS build and publish to App Store (Apple developer account may still be required by Apple).
+- **Web companion (optional):** Expo web build for a lightweight browser dashboard.
+
+### Device Support Targets
+- Android 10+ and iOS 16+.
+- 2 GB RAM minimum target profile.
+- Camera permission required; location permission optional.
+
+## 8.2) Zero-Cost Online Deployment + Persistent Data Plan
+
+> Objective: keep running costs at **$0** by staying within free-tier limits.
+
+### Recommended Free Stack
+- **Frontend hosting (optional web dashboard):** Cloudflare Pages (Free plan).
+- **Backend + database + auth + storage:** Supabase Free plan.
+- **Push notifications:** Expo notifications (free usage for typical small MVP traffic).
+- **Source control + CI:** GitHub + GitHub Actions free minutes for small repos.
+
+### Persistent Data Design
+- Use Supabase Postgres for all structured data:
+  - families, child profiles, observations, species, badges, missions.
+- Use Supabase Storage buckets for photos/audio.
+- Enable daily automatic backups export script (run via GitHub Actions on schedule) to another free private repository or object bucket.
+- Keep media metadata in Postgres so files can be restored if moved.
+
+### Security and Access (No Extra Cost)
+- Supabase Auth for parent login.
+- Row Level Security (RLS) so each family can only access their own records.
+- Signed URLs for private media access.
+- Parent role enforced in API policies.
+
+### Zero-Cost Deployment Workflow
+1. Push code to GitHub.
+2. Cloudflare Pages auto-deploys web frontend from `main` branch.
+3. Mobile app fetches API/data from Supabase project URL.
+4. Supabase persists all records/files.
+5. GitHub Action runs scheduled backup/export.
+
+### Free-Tier Guardrails (Important)
+- Add usage monitoring dashboard for DB size, storage, and request volume.
+- Auto-prune oversized raw uploads after compression.
+- Set max photo resolution and max uploads/day per child profile.
+- Archive old logs/analytics monthly.
+- If usage nears limits, enable "read-only weekend mode" toggle to avoid service pause.
+
+### Known Constraints of Fully Free Approach
+- Free tiers can throttle, pause, or limit throughput.
+- Performance may vary at peak times.
+- Not ideal for large-scale public launch without paid upgrades.
+- Keep architecture portable so you can migrate to paid infra later without rewriting the app.
+
 ## 9) Data Model (Initial)
 - **Family** (id, name, owner_user_id, locale, created_at)
 - **User** (id, email, role[parent|guardian], auth_provider)
@@ -248,7 +317,29 @@ Exclude for MVP:
 - **Low retention:** Mission cadence, seasonal content, and family reminders.
 - **Content accuracy:** Vet facts through trusted wildlife sources.
 
-## 17) Next Execution Steps
+## 17) Implementation Plan for a Free Launch
+
+### Week 1: Foundations
+- Create Supabase project, schema, RLS policies, and storage buckets.
+- Scaffold Expo app with auth, navigation, and local persistence.
+- Configure environments (`dev`, `staging`) with `.env` strategy.
+
+### Week 2: Core Capture + Sync
+- Build observation capture screen (photo, notes, tags).
+- Implement offline queue and sync engine.
+- Upload media to Supabase Storage and persist metadata.
+
+### Week 3: Pokédex + Family Features
+- Add family/child profile management.
+- Add collection grid and species detail card.
+- Add parent controls and privacy defaults.
+
+### Week 4: Deploy + Test
+- Deploy optional web dashboard to Cloudflare Pages.
+- Set up GitHub Actions for backup exports and lint/test checks.
+- Conduct closed pilot with 10 families and monitor free-tier usage.
+
+## 18) Next Execution Steps
 1. Approve MVP scope and prioritized backlog.
 2. Create UX wireframes for onboarding, capture, and species confirmation.
 3. Define API contracts and event analytics schema.
