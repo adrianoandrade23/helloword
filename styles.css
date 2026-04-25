@@ -7,6 +7,8 @@
   --primary: #2f9e44;
   --primary-dark: #237534;
   --border: #d8eadb;
+  --error: #b42318;
+  --success: #166534;
 }
 
 * {
@@ -110,6 +112,11 @@ h1 {
   cursor: pointer;
 }
 
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .primary {
   background: var(--primary);
   color: white;
@@ -140,6 +147,24 @@ h1 {
   border-radius: 10px;
   padding: 0.65rem 0.8rem;
   font-size: 1rem;
+}
+
+.form-feedback {
+  min-height: 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.form-feedback.info {
+  color: var(--muted);
+}
+
+.form-feedback.success {
+  color: var(--success);
+}
+
+.form-feedback.error {
+  color: var(--error);
 }
 
 footer {
