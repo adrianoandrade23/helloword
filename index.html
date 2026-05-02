@@ -3,78 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Backyard Pokédex | Family Nature Explorer</title>
+    <title>Salesforce Solution Discovery Wizard | Solution v1 MVP</title>
     <meta
       name="description"
-      content="Backyard Pokédex is a family-friendly app concept to discover, identify, and track backyard wildlife together."
+      content="An adaptive Salesforce discovery wizard that maps business-friendly answers to architecture-ready outputs."
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="hero">
-      <nav class="top-nav">
-        <span class="brand">🌿 Backyard Pokédex</span>
-        <a class="button ghost" href="#waitlist">Join waitlist</a>
-      </nav>
-
-      <div class="hero-content">
-        <p class="eyebrow">POC · Front page</p>
-        <h1>Turn backyard moments into family discoveries.</h1>
-        <p class="subtitle">
-          A playful, kid-friendly way to capture bugs, birds, and tiny backyard adventures while parents stay in control.
-        </p>
-        <div class="cta-row">
-          <a class="button primary" href="#features">Explore features</a>
-          <a class="button secondary" href="#vision">See app vision</a>
-        </div>
-      </div>
+    <header class="hero compact">
+      <h1>Salesforce Solution Discovery Wizard</h1>
+      <p class="subtitle">
+        Modular discovery for architects, business users, and developers. Answer guided questions and export AI-ready JSON + Markdown for SSD drafting.
+      </p>
     </header>
 
-    <main>
-      <section id="features" class="section">
-        <h2>What families can do</h2>
-        <div class="card-grid">
-          <article class="card">
-            <h3>📸 Quick capture</h3>
-            <p>Snap a photo in seconds and save observations with notes, behavior tags, and optional location.</p>
-          </article>
-          <article class="card">
-            <h3>🧠 Smart species hints</h3>
-            <p>Get top candidate matches for each sighting, then let a parent confirm the final species.</p>
-          </article>
-          <article class="card">
-            <h3>🏅 Progress and badges</h3>
-            <p>Unlock species cards, earn fun badges, and keep kids motivated with seasonal discovery goals.</p>
-          </article>
+    <main class="wizard-layout">
+      <aside class="panel">
+        <h2>1) Select modules</h2>
+        <p class="muted">Choose implementation areas in scope for this discovery.</p>
+        <div id="module-list" class="checklist"></div>
+        <button id="start-wizard" class="button primary">Start discovery</button>
+      </aside>
+
+      <section class="panel grow">
+        <div id="wizard-empty">
+          <h2>2) Guided interview</h2>
+          <p class="muted">Start the wizard to load adaptive questions.</p>
+        </div>
+
+        <div id="wizard" class="hidden">
+          <div class="wizard-header">
+            <h2 id="module-title"></h2>
+            <p id="module-description" class="muted"></p>
+            <div id="module-progress" class="badge"></div>
+          </div>
+          <div id="question-container"></div>
+          <div class="actions">
+            <button id="prev-question" class="button secondary">Previous</button>
+            <button id="next-question" class="button primary">Next</button>
+          </div>
         </div>
       </section>
 
-      <section id="vision" class="section alt">
-        <h2>Built for learning and safety</h2>
-        <ul>
-          <li>Private-by-default family profiles.</li>
-          <li>Parent controls for sharing and privacy settings.</li>
-          <li>Real-world nature learning with age-appropriate design.</li>
-        </ul>
-      </section>
-
-      <section id="waitlist" class="section">
-        <h2>Stay updated</h2>
-        <p>This is an initial proof-of-concept landing page. Full product flows are coming next.</p>
-        <form class="waitlist-form" id="waitlist-form">
-          <label for="email" class="sr-only">Email address</label>
-          <input id="email" name="email" type="email" placeholder="Parent email" required />
-          <button type="submit" class="button primary" id="waitlist-submit">Notify me</button>
-        </form>
-        <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
-      </section>
+      <aside class="panel">
+        <h2>3) Review & export</h2>
+        <div id="review-summary" class="muted">No responses yet.</div>
+        <div class="actions stack">
+          <button id="mark-review" class="button secondary">Mark current module: Needs review</button>
+          <button id="export-json" class="button primary">Export JSON</button>
+          <button id="export-md" class="button ghost">Export Markdown</button>
+        </div>
+      </aside>
     </main>
 
-    <footer>
-      <small>© 2026 Backyard Pokédex POC</small>
-    </footer>
-
-    <script src="config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
